@@ -4,12 +4,12 @@
 
 ---
 
-Builds and pushes docker images inside kubernetes
+Builds and pushes docker images inside kubernetes. Two pods are spun up, one is an API to create and issue builds, the other is docker-in-docker to build and push images.
 
 ## Install
 
 ```sh
-$ kubectl apply -f https://github.com/synthesis-labs/polaris-gantry/polaris-gantry.yaml
+$ kubectl apply -f https://raw.githubusercontent.com/synthesis-labs/polaris-gantry/master/polaris-gantry.yaml
 $ kubectl port-forward 3001 polaris-gantry
 ```
 
