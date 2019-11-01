@@ -1,0 +1,18 @@
+# Single pod with two containers
+# 1. polaris-gantry node service which pulls repos and builds them
+# 2. Docker-in-docker image used by gantry to build docker images
+apiVersion: v1
+kind: Pod
+metadata:
+  name: polaris-gantry
+spec:
+  containers:
+    - name: polaris-gantry
+      image: synthesis/polaris-gantry
+      env:
+        - name: DOCKER_HOST
+          value: tcp://localhost:2375
+    - name: dind
+      image: docker:18.05-dind
+      securityContext:
+        privileged: true

@@ -1,0 +1,10 @@
+{
+  "repos": [
+    {
+      "name": "example",
+      "url": "https://<USERNAME>:<PASSWORD>@bitbucket.org/synthesis_admin/example.git",
+      "tag": "535282574996.dkr.ecr.eu-west-1.amazonaws.com/example:latest",
+      "dockerfile": "images/example"
+    }
+  ]
+}
