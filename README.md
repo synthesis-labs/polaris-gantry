@@ -19,6 +19,7 @@ $ kubectl port-forward 3001 polaris-gantry
 
 ```
 POST: http://localhost:3001/repos
+GET: http://localhost:3001/repos
 ```
 
 ```json
