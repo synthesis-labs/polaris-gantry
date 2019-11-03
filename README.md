@@ -62,3 +62,4 @@ $ npm start
 - Tag with git commit
 - Add trigger option for building on commit
 - Read git credentials from secret
+- Store state on CRD's or volume, external to container
