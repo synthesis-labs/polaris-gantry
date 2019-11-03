@@ -1,4 +1,4 @@
-# Polaris Gantry (Work-in-progress)
+# Polaris Gantry
 
 **_Super simple docker build / push service inside Kubernetes._**
 
