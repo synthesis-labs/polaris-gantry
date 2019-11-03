@@ -10,7 +10,7 @@ git clone $1
 echo $ cd $2
 cd $2
 
-echo $ docker login -u $4 -p ***** $6
+echo $ docker login -u $4 -p xxxxx $6
 docker login -u $4 -p $5 $6
 
 echo $ docker build -t $3 . --network=host

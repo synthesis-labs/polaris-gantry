@@ -34,10 +34,20 @@ GET: http://localhost:3001/repos
 }
 ```
 
-1. Issue build
+1. Issue a build
 
 ```
 POST: http://localhost:3001/repos/REPO_NAME/build
+```
+
+Running the following inside a container in your cluster:
+
+```sh
+$ git clone
+$ cd to_docker_file
+$ docker login
+$ docker build .
+$ docker push
 ```
 
 ## Development
@@ -49,5 +59,6 @@ $ npm start
 
 ## TODO
 
+- Tag with git commit
 - Add trigger option for building on commit
 - Read git credentials from secret

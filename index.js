@@ -29,10 +29,7 @@ app.post("/repos", (req, res) => {
 
 app.post("/repos/:name/build", (req, res) => {
   var repo = db.get("repos").find({ name: req.params.name });
-
-  console.log("======================================================================");
-  console.log(`POST: /repos/${req.params.name}/build`);
-  console.log(JSON.stringify(repo, 0, 2));
+  console.log(`=== BUILD STARTED: ${req.params.name} ===`);
 
   ecr.getAuthorizationToken({}, function(err, data) {
     if (err) console.log(err, err.stack);
@@ -44,8 +41,8 @@ app.post("/repos/:name/build", (req, res) => {
       var password = dockerToken[1];
 
       // prettier-ignore
-      shell.exec(`./build-push.sh ${repo.value().url} ${repo.value().dockerfile} ${repo.value().tag} ${username} ${password} ${repo.value().url.split("/")[0]}`);
-      console.log("======================================================================");
+      shell.exec(`./build-push.sh ${repo.value().url} ${repo.value().dockerfile} ${repo.value().tag} ${username} ${password} ${"https://" + repo.value().tag.split("/")[0]}`);
+      console.log(`=== BUILD COMPLETED: ${req.params.name} ===`);
     }
   });
 
