@@ -20,7 +20,7 @@ POST: http://localhost:3001/repos
 GET: http://localhost:3001/repos
 ```
 
-```json
+```js
 {
   "name": "example", // Identifier for this repo
   "url": "https://<USERNAME>:<PASSWORD>@bitbucket.org/synthesis_admin/example.git", // Git repo, include credentials
