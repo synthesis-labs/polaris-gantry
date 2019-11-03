@@ -4,6 +4,8 @@
 
 Builds and pushes docker images inside Kubernetes to AWS ECR. Two pods are spun up, one is an API to create and issue builds, the other is docker-in-docker to build and push images.
 
+For now, state is stored in a json file on the container so deleting the pod refreshes the state.
+
 ## Install
 
 ```sh
