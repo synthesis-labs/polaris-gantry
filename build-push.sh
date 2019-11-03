@@ -4,7 +4,7 @@ mkdir repos
 echo $ cd repos
 cd repos
 
-echo $ git clone $1
+echo $ git clone
 git clone $1
 
 echo $ cd $2
