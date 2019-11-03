@@ -22,10 +22,13 @@ GET: http://localhost:3001/repos
 
 ```json
 {
-  "name": "example",
-  "url": "https://<USERNAME>:<PASSWORD>@bitbucket.org/synthesis_admin/example.git",
-  "tag": "535282574996.dkr.ecr.eu-west-1.amazonaws.com/example:latest",
-  "dockerfile": "images/example"
+  "name": "example", // Identifier for this repo
+  "url": "https://<USERNAME>:<PASSWORD>@bitbucket.org/synthesis_admin/example.git", // Git repo, include credentials
+  "tag": "535282574996.dkr.ecr.eu-west-1.amazonaws.com/example:latest", // Tag which includes docker registry to use
+  "dockerfile": "images/example", // Dockerfile location inside the repo
+
+  // TODO:
+  "trigger": "commit" // none | commit
 }
 ```
 
@@ -41,3 +44,10 @@ POST: http://localhost:3001/repos/REPO_NAME/build
 $ npm install
 $ npm start
 ```
+
+## TODO
+
+- Docker login: `$(aws ecr get-login --no-include-email)`
+- Make build asynchronus
+- Add trigger option for building on commit
+- Read git credentials from secret
