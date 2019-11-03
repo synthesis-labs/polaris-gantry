@@ -2,7 +2,7 @@
 
 **_Super simple docker build / push service inside Kubernetes._**
 
-Builds and pushes docker images inside Kubernetes. Two pods are spun up, one is an API to create and issue builds, the other is docker-in-docker to build and push images.
+Builds and pushes docker images inside Kubernetes to AWS ECR. Two pods are spun up, one is an API to create and issue builds, the other is docker-in-docker to build and push images.
 
 ## Install
 
@@ -47,7 +47,5 @@ $ npm start
 
 ## TODO
 
-- Docker login: `$(aws ecr get-login --no-include-email)`
-- Make build asynchronus
 - Add trigger option for building on commit
 - Read git credentials from secret
