@@ -1,18 +1,61 @@
-# Single pod with two containers
-# 1. polaris-gantry node service which pulls repos and builds them
-# 2. Docker-in-docker image used by gantry to build docker images
 apiVersion: v1
-kind: Pod
+kind: Service
 metadata:
   name: polaris-gantry
+  labels:
+    app.kubernetes.io/name: polaris-gantry
+    app.kubernetes.io/version: 1.0.0
+    app.kubernetes.io/part-of: polaris
 spec:
-  containers:
-    - name: polaris-gantry
-      image: synthesis/polaris-gantry
-      env:
-        - name: DOCKER_HOST
-          value: tcp://localhost:2375
-    - name: dind
-      image: docker:18.05-dind
-      securityContext:
-        privileged: true
+  type: NodePort
+  ports:
+    - port: 80
+      targetPort: 3001
+      protocol: TCP
+  selector:
+    app.kubernetes.io/name: polaris-gantry
+---
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: polaris-gantry
+  labels:
+    app.kubernetes.io/name: polaris-gantry
+    app.kubernetes.io/version: 1.0.0
+    app.kubernetes.io/part-of: polaris
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: polaris-gantry
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: polaris-gantry
+        app.kubernetes.io/version: 1.0.0
+        app.kubernetes.io/part-of: polaris
+    spec:
+      containers:
+        - name: polaris-gantry
+          image: synthesis/polaris-gantry
+          env:
+            - name: DOCKER_HOST
+              value: tcp://localhost:2375
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+        - name: dind
+          image: docker:18.05-dind
+          securityContext:
+            privileged: true
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"

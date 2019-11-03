@@ -1,16 +1,14 @@
-# Polaris Gantry
+# Polaris Gantry (Work-in-progress)
 
-## **_Work-in-progress_**
+**_Super simple docker build / push service inside Kubernetes._**
 
----
-
-Builds and pushes docker images inside kubernetes. Two pods are spun up, one is an API to create and issue builds, the other is docker-in-docker to build and push images.
+Builds and pushes docker images inside Kubernetes. Two pods are spun up, one is an API to create and issue builds, the other is docker-in-docker to build and push images.
 
 ## Install
 
 ```sh
 $ kubectl apply -f https://raw.githubusercontent.com/synthesis-labs/polaris-gantry/master/polaris-gantry.yaml
-$ kubectl port-forward 3001 polaris-gantry
+$ kubectl port-forward 3001:80 svc/polaris-gantry
 ```
 
 ## Usage
