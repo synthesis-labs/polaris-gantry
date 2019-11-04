@@ -33,6 +33,8 @@ GET: http://localhost:3001/repos
 }
 ```
 
+PS. you can specify the password for git or provide it via environment variable: `GANTRY_GIT_PASSWORD` and leave it out of url.
+
 1. Issue a build
 
 ```
@@ -58,5 +60,4 @@ $ npm start
 
 ## TODO
 
-- Read git credentials from secret
 - Store state on volume

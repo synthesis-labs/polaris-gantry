@@ -15,7 +15,7 @@ module.exports.build = async repo => {
       shell.exec("git pull");
     } else {
       console.log("$ git clone");
-      shell.exec(`git clone ${repo.url}`);
+      shell.exec(`git clone ${helpers.getRepoUrl(repo.url)}`);
       shell.cd(helpers.getRepoName(repo.url));
     }
 
