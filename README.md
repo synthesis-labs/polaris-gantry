@@ -26,8 +26,9 @@ GET: http://localhost:3001/repos
 {
   "name": "example", // Identifier for this repo
   "url": "https://<USERNAME>:<PASSWORD>@bitbucket.org/synthesis_admin/example.git", // Git repo, include credentials
-  "tag": "535282574996.dkr.ecr.eu-west-1.amazonaws.com/example:latest", // Tag which includes docker registry to use
+  "registry": "535282574996.dkr.ecr.eu-west-1.amazonaws.com/example", // Docker registry to use
   "dockerfile": "images/example", // Dockerfile location inside the repo
+  "branch": "master",
 
   // TODO:
   "trigger": "commit" // none | commit
@@ -40,13 +41,13 @@ GET: http://localhost:3001/repos
 POST: http://localhost:3001/repos/REPO_NAME/build
 ```
 
-Running the following inside a container in your cluster:
+A build will run the following inside a container in your cluster:
 
 ```sh
 $ git clone
 $ cd to_docker_file
 $ docker login
-$ docker build .
+$ docker build . # Tagged with git commit hash and "latest"
 $ docker push
 ```
 
@@ -59,7 +60,7 @@ $ npm start
 
 ## TODO
 
-- Tag with git commit
 - Add trigger option for building on commit
+- Special docker builds
 - Read git credentials from secret
-- Store state on CRD's or volume, external to container
+- Store state on volume

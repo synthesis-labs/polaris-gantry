@@ -1,8 +1,8 @@
 const express = require("express");
 const db = require("./db");
 const bodyParser = require("body-parser");
-const shell = require("shelljs");
 const AWS = require("aws-sdk");
+const builder = require("./builder");
 const ecr = new AWS.ECR({ region: "eu-west-1" });
 
 const app = express();
@@ -29,22 +29,22 @@ app.post("/repos", (req, res) => {
 
 app.post("/repos/:name/build", (req, res) => {
   var repo = db.get("repos").find({ name: req.params.name });
-  console.log(`=== BUILD STARTED: ${req.params.name} ===`);
+  if (repo.value() == undefined) {
+    console.error(`No repo named ${req.params.name}, see all repos with GET: /repos`);
+  } else {
+    ecr.getAuthorizationToken({}, function(err, data) {
+      if (err) console.log(err, err.stack);
+      else {
+        var dockerToken = Buffer.from(data.authorizationData[0].authorizationToken, "base64")
+          .toString("ascii")
+          .split(":");
+        var username = dockerToken[0];
+        var password = dockerToken[1];
 
-  ecr.getAuthorizationToken({}, function(err, data) {
-    if (err) console.log(err, err.stack);
-    else {
-      var dockerToken = Buffer.from(data.authorizationData[0].authorizationToken, "base64")
-        .toString("ascii")
-        .split(":");
-      var username = dockerToken[0];
-      var password = dockerToken[1];
-
-      // prettier-ignore
-      shell.exec(`./build-push.sh ${repo.value().url} ${repo.value().dockerfile} ${repo.value().tag} ${username} ${password} ${"https://" + repo.value().tag.split("/")[0]}`);
-      console.log(`=== BUILD COMPLETED: ${req.params.name} ===`);
-    }
-  });
+        builder.build(repo.value(), username, password);
+      }
+    });
+  }
 
   res.send();
 });
