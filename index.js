@@ -1,9 +1,10 @@
 const express = require("express");
+const fs = require("fs");
+const shell = require("shelljs");
 const db = require("./db");
 const bodyParser = require("body-parser");
-const AWS = require("aws-sdk");
 const builder = require("./builder");
-const ecr = new AWS.ECR({ region: "eu-west-1" });
+const watcher = require("./watcher");
 
 const app = express();
 const port = 3001;
@@ -15,6 +16,10 @@ app.use(function(req, res, next) {
 });
 
 app.use(bodyParser.json());
+
+if (!fs.existsSync("/app/repos")) {
+  shell.mkdir("/app/repos");
+}
 
 app.get("/", (req, res) => res.send("Hello polaris gantry!"));
 app.get("/repos", (req, res) => res.send(db.get("repos")));
@@ -32,21 +37,11 @@ app.post("/repos/:name/build", (req, res) => {
   if (repo.value() == undefined) {
     console.error(`No repo named ${req.params.name}, see all repos with GET: /repos`);
   } else {
-    ecr.getAuthorizationToken({}, function(err, data) {
-      if (err) console.log(err, err.stack);
-      else {
-        var dockerToken = Buffer.from(data.authorizationData[0].authorizationToken, "base64")
-          .toString("ascii")
-          .split(":");
-        var username = dockerToken[0];
-        var password = dockerToken[1];
-
-        builder.build(repo.value(), username, password);
-      }
-    });
+    builder.build(repo.value());
   }
 
   res.send();
 });
 
 app.listen(port, () => console.log(`Listening on port ${port}!`));
+setTimeout(watcher.watch, 10000);

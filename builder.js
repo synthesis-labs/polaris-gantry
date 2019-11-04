@@ -1,52 +1,43 @@
-const shell = require("shelljs");
 const fs = require("fs");
+const shell = require("shelljs");
+const helpers = require("./helpers");
+const AWS = require("aws-sdk");
+const ecr = new AWS.ECR({ region: "eu-west-1" });
 
-function getRepoName(url) {
-  var repoUrlSplit = url.split("/");
-  return repoUrlSplit[repoUrlSplit.length - 1].substr(
-    0,
-    repoUrlSplit[repoUrlSplit.length - 1].length - 4
-  );
-}
-
-function getGitHash() {
-  return require("child_process")
-    .execSync("git rev-parse --short HEAD")
-    .toString()
-    .trim();
-}
-
-module.exports.build = (repo, dockerUsername, dockerPassword) => {
+module.exports.build = async repo => {
   console.log(`=== BUILD STARTED: ${repo.name} ===`);
   try {
-    if (!fs.existsSync("repos")) {
-      shell.mkdir("repos");
-    }
+    shell.cd("/app/repos");
 
-    shell.cd("repos");
-
-    if (fs.existsSync(getRepoName(repo.url))) {
-      shell.cd(getRepoName(repo.url));
+    if (fs.existsSync(helpers.getRepoName(repo.url))) {
+      shell.cd(helpers.getRepoName(repo.url));
       console.log("$ git pull");
       shell.exec("git pull");
-    }
-    else {
+    } else {
       console.log("$ git clone");
       shell.exec(`git clone ${repo.url}`);
-      shell.cd(getRepoName(repo.url));
+      shell.cd(helpers.getRepoName(repo.url));
     }
 
     console.log(`$ git checkout ${repo.branch}`);
     shell.exec(`git checkout ${repo.branch}`);
 
-    console.log(`$ cd ${repo.dockerfile}`);
-    shell.cd(repo.dockerfile);
+    console.log(`$ cd ${repo.buildDirectory}`);
+    shell.cd(repo.buildDirectory);
 
-    console.log(`$ docker login -u ${dockerUsername} -p ***** ${"https://" + repo.registry.split("/")[0]}`);
-    shell.exec(`docker login -u ${dockerUsername} -p ${dockerPassword} ${"https://" +repo.registry.split("/")[0]}`);
+    var data = await ecr.getAuthorizationToken().promise();
 
-    console.log(`$ docker build -t ${repo.registry}:latest -t ${repo.registry}:${getGitHash()} . --network=host`);
-    shell.exec(`docker build -t ${repo.registry}:latest -t ${repo.registry}:${getGitHash()} . --network=host`);
+    var dockerToken = Buffer.from(data.authorizationData[0].authorizationToken, "base64")
+        .toString("ascii")
+        .split(":");
+    var username = dockerToken[0];
+    var password = dockerToken[1];
+
+    console.log(`$ docker login -u ${username} -p ***** ${"https://" + repo.registry.split("/")[0]}`);
+    shell.exec(`docker login -u ${username} -p ${password} ${"https://" + repo.registry.split("/")[0]}`);
+
+    console.log(`$ docker build -t ${repo.registry}:latest -t ${repo.registry}:${helpers.getGitHash()} -f ${repo.dockerfile} . --network=host`);
+    shell.exec(`docker build -t ${repo.registry}:latest -t ${repo.registry}:${helpers.getGitHash()} -f ${repo.dockerfile} . --network=host`);
 
     console.log(`$ docker push ${repo.registry}`);
     shell.exec(`docker push ${repo.registry}`);

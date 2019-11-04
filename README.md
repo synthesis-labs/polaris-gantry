@@ -29,8 +29,6 @@ GET: http://localhost:3001/repos
   "registry": "535282574996.dkr.ecr.eu-west-1.amazonaws.com/example", // Docker registry to use
   "dockerfile": "images/example", // Dockerfile location inside the repo
   "branch": "master",
-
-  // TODO:
   "trigger": "commit" // none | commit
 }
 ```
@@ -60,7 +58,5 @@ $ npm start
 
 ## TODO
 
-- Add trigger option for building on commit
-- Special docker builds
 - Read git credentials from secret
 - Store state on volume
