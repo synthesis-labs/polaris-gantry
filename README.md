@@ -61,3 +61,7 @@ $ npm start
 ## TODO
 
 - Store state on volume
+
+## Inspiration
+
+https://medium.com/hootsuite-engineering/building-docker-images-inside-kubernetes-42c6af855f25
