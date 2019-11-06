@@ -5,7 +5,7 @@ const AWS = require("aws-sdk");
 const ecr = new AWS.ECR({ region: "eu-west-1" });
 
 module.exports.build = async repo => {
-  console.log(`=== BUILD STARTED: ${repo.name} ===`);
+  console.log(`=== ${(new Date()).toISOString()} BUILD STARTED: ${repo.name} ===`);
   try {
     shell.cd("/app/repos");
 
@@ -42,9 +42,9 @@ module.exports.build = async repo => {
     console.log(`$ docker push ${repo.registry}`);
     shell.exec(`docker push ${repo.registry}`);
 
-    console.log(`=== BUILD COMPLETED: ${repo.name} ===`);
+    console.log(`=== ${(new Date()).toISOString()} BUILD COMPLETED: ${repo.name} ===`);
   } catch (ex) {
     console.error(ex);
-    console.log(`=== BUILD FAILED: ${repo.name} ===`);
+    console.log(`=== ${(new Date()).toISOString()} BUILD FAILED: ${repo.name} ===`);
   }
 };
