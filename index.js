@@ -44,4 +44,4 @@ app.post("/repos/:name/build", (req, res) => {
 });
 
 app.listen(port, () => console.log(`Listening on port ${port}!`));
-setTimeout(watcher.watch, 10000);
+setTimeout(watcher.watch, 1000);

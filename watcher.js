@@ -14,9 +14,9 @@ module.exports.watch = () => {
       .filter({ trigger: "commit" })
       .value();
 
-    repos.forEach(repo => {
+    repos.forEach(async repo => {
       shell.cd("/app/repos");
-    //   console.debug(`Checking ${repo.name}`);
+      //   console.debug(`Checking ${repo.name}`);
 
       if (fs.existsSync(helpers.getRepoName(repo.url))) {
         shell.cd(helpers.getRepoName(repo.url));
@@ -28,24 +28,24 @@ module.exports.watch = () => {
         if (previousHash == undefined) {
           hashHistory.push({ repo: repo.name, previousHash: currentHash });
           console.log(`No build history, kicking off build ${currentHash}`);
-          builder.build(repo);
+          await builder.build(repo);
         } else if (previousHash.previousHash !== currentHash) {
           previousHash.previousHash = currentHash;
-        //   console.debug(hashHistory);
+          //   console.debug(hashHistory);
           console.log(`Found changes, kicking off build ${currentHash}`);
-          builder.build(repo);
+          await builder.build(repo);
         } else {
-        //   console.debug(`No changes (Previous: ${previousHash.previousHash}, current: ${currentHash})`);
-        //   console.debug(hashHistory);
+          //   console.debug(`No changes (Previous: ${previousHash.previousHash}, current: ${currentHash})`);
+          //   console.debug(hashHistory);
         }
       } else {
         console.log("New repo, haven't pulled yet... Kicking off build");
-        builder.build(repo);
+        await builder.build(repo);
       }
     });
   } catch (ex) {
-      console.log("Watcher failed")
+    console.log("Watcher failed");
   }
 
   setTimeout(module.exports.watch, 10000);
-}
+};

@@ -1,13 +1,3 @@
 {
-  "repos": [
-    {
-      "name": "example",
-      "url": "https://USERNAME:PASSWORD@bitbucket.org/synthesis_admin/example.git",
-      "registry": "535282574996.dkr.ecr.eu-west-1.amazonaws.com/example",
-      "buildDirectory": "images/example",
-      "dockerfile": "Dockerfile",
-      "branch": "master",
-      "trigger": "none"
-    }
-  ]
+  "repos": []
 }

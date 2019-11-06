@@ -4,8 +4,19 @@ const helpers = require("./helpers");
 const AWS = require("aws-sdk");
 const ecr = new AWS.ECR({ region: "eu-west-1" });
 
+var builds = 0;
+
+const sleep = milliseconds => {
+  return new Promise(resolve => setTimeout(resolve, milliseconds));
+};
+
 module.exports.build = async repo => {
-  console.log(`=== ${(new Date()).toISOString()} BUILD STARTED: ${repo.name} ===`);
+  console.log(`=== ${new Date().toISOString()} BUILD STARTED: ${repo.name} ===`);
+  while (builds > 0) {
+    await sleep(5000);
+  }
+  builds++;
+
   try {
     shell.cd("/app/repos");
 
@@ -28,8 +39,8 @@ module.exports.build = async repo => {
     var data = await ecr.getAuthorizationToken().promise();
 
     var dockerToken = Buffer.from(data.authorizationData[0].authorizationToken, "base64")
-        .toString("ascii")
-        .split(":");
+      .toString("ascii")
+      .split(":");
     var username = dockerToken[0];
     var password = dockerToken[1];
 
@@ -42,9 +53,11 @@ module.exports.build = async repo => {
     console.log(`$ docker push ${repo.registry}`);
     shell.exec(`docker push ${repo.registry}`);
 
-    console.log(`=== ${(new Date()).toISOString()} BUILD COMPLETED: ${repo.name} ===`);
+    console.log(`=== ${new Date().toISOString()} BUILD COMPLETED: ${repo.name} ===`);
+    builds--;
   } catch (ex) {
     console.error(ex);
-    console.log(`=== ${(new Date()).toISOString()} BUILD FAILED: ${repo.name} ===`);
+    console.log(`=== ${new Date().toISOString()} BUILD FAILED: ${repo.name} ===`);
+    builds--;
   }
 };
